@@ -46,3 +46,9 @@ One-time setup (cannot be automated from code):
 ## Notes on logos
 
 For best results with SVG logos, make sure the SVG has explicit `width`/`height` (or `viewBox`) attributes — some browsers render SVGs without these at an unexpected default size.
+
+### Auto-loading a logo from the URL
+
+Visiting the site at a path like `/rentwin` automatically pre-selects a matching logo from the `logos/` folder — it looks for `logos/rentwin.svg` and then `logos/rentwin-logo.svg`. This works both with GitHub Pages and with the local `http-server` because [404.html](404.html) stashes the requested path and redirects to the app, which then reads it back and loads the file into the logo input.
+
+To add a new auto-loadable logo, drop an SVG into `logos/` named `<name>.svg` or `<name>-logo.svg`, then share a link to `https://<username>.github.io/<repo>/<name>`.

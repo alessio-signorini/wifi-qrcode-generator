@@ -14,6 +14,7 @@
   const passwordInput = document.getElementById("wifi-password");
   const togglePasswordBtn = document.getElementById("toggle-password");
   const logoInput = document.getElementById("logo");
+  const logoStatusEl = document.getElementById("logo-status");
   const colorInput = document.getElementById("color");
   const errorEl = document.getElementById("form-error");
   const downloadBtn = document.getElementById("download-btn");
@@ -31,6 +32,8 @@
     togglePasswordBtn.textContent = isPassword ? "🙈" : "👁️";
     togglePasswordBtn.setAttribute("aria-label", isPassword ? "Hide password" : "Show password");
   });
+
+  autoLoadLogoFromUrl();
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -92,6 +95,52 @@
   function showError(message) {
     errorEl.textContent = message;
     errorEl.hidden = false;
+  }
+
+  function getRequestedLogoName() {
+    // If we were bounced here from 404.html (GitHub Pages/http-server have
+    // no server-side routing), the real requested path is stashed here.
+    const redirectPath = sessionStorage.getItem("redirectPath");
+    sessionStorage.removeItem("redirectPath");
+    const path = redirectPath || location.pathname;
+
+    const segments = path.split("/").filter(Boolean);
+    const lastSegment = segments[segments.length - 1];
+    if (!lastSegment || lastSegment.toLowerCase() === "index.html") return null;
+
+    return decodeURIComponent(lastSegment).replace(/\.[^.]+$/, "");
+  }
+
+  async function fetchLogoFile(name) {
+    const candidates = [`logos/${name}.svg`, `logos/${name}-logo.svg`];
+    for (const url of candidates) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) continue;
+        const blob = await response.blob();
+        return new File([blob], url.split("/").pop(), { type: "image/svg+xml" });
+      } catch {
+        // try next candidate
+      }
+    }
+    return null;
+  }
+
+  async function autoLoadLogoFromUrl() {
+    const name = getRequestedLogoName();
+    if (!name) return;
+
+    const file = await fetchLogoFile(name);
+    if (!file) return;
+
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    logoInput.files = dataTransfer.files;
+
+    history.replaceState(null, "", `${location.pathname.replace(/\/[^/]*$/, "/")}${name}`);
+
+    logoStatusEl.textContent = `✓ Loaded "${name}" logo automatically.`;
+    logoStatusEl.hidden = false;
   }
 
   function clearError() {

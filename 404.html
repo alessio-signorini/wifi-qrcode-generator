@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WiFi QR Code Generator</title>
+<script>
+  // GitHub Pages (and http-server) serve this file for any unknown path,
+  // e.g. /rentwin. Stash the requested path and redirect to the app's
+  // root, where app.js reads it back to auto-load a matching logo.
+  sessionStorage.setItem("redirectPath", location.pathname + location.search + location.hash);
+  location.replace(location.pathname.replace(/\/[^/]*$/, "/"));
+</script>
+</head>
+<body></body>
+</html>

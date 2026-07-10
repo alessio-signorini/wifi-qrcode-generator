@@ -49,25 +49,59 @@ body {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
   gap: 28px;
-  align-items: start;
+  align-items: stretch;
+}
+
+.layout .card {
+  height: 471px;
 }
 
 @media (max-width: 760px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .layout .card {
+    height: auto;
+  }
+}
+
+@media (max-width: 480px) {
   .page {
-    padding: 32px 16px 48px;
+    padding: 28px 16px 40px;
+  }
+
+  .page__header {
+    margin-bottom: 24px;
   }
 
   .page__header h1 {
-    font-size: 1.7rem;
+    font-size: 1.6rem;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
   }
 
   .layout {
-    grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 18px;
   }
 
   .card {
-    padding: 20px;
+    padding: 18px;
+    border-radius: var(--radius-md);
+  }
+
+  .field-row {
+    gap: 12px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions .btn {
+    width: 100%;
   }
 }
 
@@ -125,6 +159,24 @@ input[type="password"] {
 input[type="text"]:focus,
 input[type="password"]:focus {
   border-color: var(--color-primary);
+}
+
+/* Prevent the browser's delayed autofill styling (applied ~0.5s after load)
+   from altering the input's box size and causing a layout shift. */
+input[type="text"]:-webkit-autofill,
+input[type="password"]:-webkit-autofill,
+input[type="text"]:-webkit-autofill:hover,
+input[type="password"]:-webkit-autofill:hover {
+  border: 2px solid var(--color-border);
+  -webkit-text-fill-color: var(--color-text);
+  transition: background-color 600000s ease-in-out 0s, border-color 0.15s ease;
+}
+
+input[type="text"]:-webkit-autofill:focus,
+input[type="password"]:-webkit-autofill:focus {
+  border: 2px solid var(--color-primary);
+  -webkit-text-fill-color: var(--color-text);
+  transition: background-color 600000s ease-in-out 0s, border-color 0.15s ease;
 }
 
 input[type="file"] {
@@ -238,6 +290,8 @@ input[type="color"] {
 .btn--primary:hover:not(:disabled) {
   background: var(--color-primary-dark);
 }
+  max-width: 100%;
+  display: block;
 
 .btn--secondary {
   background: #f3f1ff;
@@ -254,6 +308,7 @@ input[type="color"] {
   align-items: center;
   justify-content: center;
   gap: 16px;
+  height: 100%;
 }
 
 .preview__checkerboard {
