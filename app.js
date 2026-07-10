@@ -7,6 +7,7 @@
   const FINAL_SIZE = QR_SIZE + FRAME_PADDING * 2;
   const OUTER_RADIUS = 40;
   const INNER_RADIUS = 26;
+  const DOWNLOAD_SCALE = 2;
 
   const form = document.getElementById("qr-form");
   const ssidInput = document.getElementById("ssid");
@@ -21,6 +22,8 @@
 
   previewCanvas.width = FINAL_SIZE;
   previewCanvas.height = FINAL_SIZE;
+
+  let lastGenerationInput = null;
 
   togglePasswordBtn.addEventListener("click", () => {
     const isPassword = passwordInput.type === "password";
@@ -39,14 +42,17 @@
       return;
     }
 
+    const generationInput = {
+      ssid,
+      password: passwordInput.value,
+      color: colorInput.value,
+      background: form.querySelector('input[name="background"]:checked').value,
+      logoFile: logoInput.files[0] || null,
+    };
+
     try {
-      await generateQrCode({
-        ssid,
-        password: passwordInput.value,
-        color: colorInput.value,
-        background: form.querySelector('input[name="background"]:checked').value,
-        logoFile: logoInput.files[0] || null,
-      });
+      await renderQrToCanvas(previewCtx, 1, generationInput);
+      lastGenerationInput = generationInput;
       downloadBtn.disabled = false;
     } catch (err) {
       console.error(err);
@@ -54,8 +60,23 @@
     }
   });
 
-  downloadBtn.addEventListener("click", () => {
-    previewCanvas.toBlob((blob) => {
+  downloadBtn.addEventListener("click", async () => {
+    if (!lastGenerationInput) return;
+
+    const downloadCanvas = document.createElement("canvas");
+    downloadCanvas.width = FINAL_SIZE * DOWNLOAD_SCALE;
+    downloadCanvas.height = FINAL_SIZE * DOWNLOAD_SCALE;
+    const downloadCtx = downloadCanvas.getContext("2d");
+
+    try {
+      await renderQrToCanvas(downloadCtx, DOWNLOAD_SCALE, lastGenerationInput);
+    } catch (err) {
+      console.error(err);
+      showError("Something went wrong while preparing the download. Please try again.");
+      return;
+    }
+
+    downloadCanvas.toBlob((blob) => {
       if (!blob) return;
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -175,10 +196,10 @@
     });
   }
 
-  async function renderStyledQrImage({ data, color, background, imageDataUrl, imageSize }) {
+  async function renderStyledQrImage({ width, data, color, background, imageDataUrl, imageSize }) {
     const qrCode = new QRCodeStyling({
-      width: QR_SIZE,
-      height: QR_SIZE,
+      width,
+      height: width,
       type: "canvas",
       data,
       image: imageDataUrl,
@@ -201,18 +222,22 @@
     return blobToImage(blob);
   }
 
-  function drawFrame(ctx, size, frameColor, background) {
+  function drawFrame(ctx, size, frameColor, background, scale = 1) {
+    const borderThickness = BORDER_THICKNESS * scale;
+    const outerRadius = OUTER_RADIUS * scale;
+    const innerRadius = INNER_RADIUS * scale;
+
     ctx.clearRect(0, 0, size, size);
 
     ctx.save();
     ctx.beginPath();
-    ctx.roundRect(0, 0, size, size, OUTER_RADIUS);
+    ctx.roundRect(0, 0, size, size, outerRadius);
     ctx.roundRect(
-      BORDER_THICKNESS,
-      BORDER_THICKNESS,
-      size - BORDER_THICKNESS * 2,
-      size - BORDER_THICKNESS * 2,
-      INNER_RADIUS
+      borderThickness,
+      borderThickness,
+      size - borderThickness * 2,
+      size - borderThickness * 2,
+      innerRadius
     );
     ctx.fillStyle = frameColor;
     ctx.fill("evenodd");
@@ -222,11 +247,11 @@
       ctx.save();
       ctx.beginPath();
       ctx.roundRect(
-        BORDER_THICKNESS,
-        BORDER_THICKNESS,
-        size - BORDER_THICKNESS * 2,
-        size - BORDER_THICKNESS * 2,
-        INNER_RADIUS
+        borderThickness,
+        borderThickness,
+        size - borderThickness * 2,
+        size - borderThickness * 2,
+        innerRadius
       );
       ctx.fillStyle = "#ffffff";
       ctx.fill();
@@ -234,13 +259,19 @@
     }
   }
 
-  async function generateQrCode({ ssid, password, color, background, logoFile }) {
+  async function renderQrToCanvas(ctx, scale, { ssid, password, color, background, logoFile }) {
+    const qrSize = QR_SIZE * scale;
+    const borderThickness = BORDER_THICKNESS * scale;
+    const finalSize = FINAL_SIZE * scale;
+    const innerRadius = INNER_RADIUS * scale;
+
     const wifiString = buildWifiString(ssid, password);
     const imageDataUrl = logoFile
       ? await readLogoAsDataUrl(logoFile, color)
-      : createFallbackCenterImage(240, color, background);
+      : createFallbackCenterImage(240 * scale, color, background);
 
     const qrImage = await renderStyledQrImage({
+      width: qrSize,
       data: wifiString,
       color,
       background,
@@ -248,20 +279,20 @@
       imageSize: logoFile ? 0.32 : 0.46,
     });
 
-    drawFrame(previewCtx, FINAL_SIZE, color, background);
+    drawFrame(ctx, finalSize, color, background, scale);
 
-    const offset = (FINAL_SIZE - QR_SIZE) / 2;
-    previewCtx.save();
-    previewCtx.beginPath();
-    previewCtx.roundRect(
-      BORDER_THICKNESS,
-      BORDER_THICKNESS,
-      FINAL_SIZE - BORDER_THICKNESS * 2,
-      FINAL_SIZE - BORDER_THICKNESS * 2,
-      INNER_RADIUS
+    const offset = (finalSize - qrSize) / 2;
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(
+      borderThickness,
+      borderThickness,
+      finalSize - borderThickness * 2,
+      finalSize - borderThickness * 2,
+      innerRadius
     );
-    previewCtx.clip();
-    previewCtx.drawImage(qrImage, offset, offset, QR_SIZE, QR_SIZE);
-    previewCtx.restore();
+    ctx.clip();
+    ctx.drawImage(qrImage, offset, offset, qrSize, qrSize);
+    ctx.restore();
   }
 })();
