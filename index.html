@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WiFi QR Code Generator</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<main class="page">
+  <header class="page__header">
+    <h1>📶 WiFi QR Code Generator</h1>
+    <p class="subtitle">Create a cute, scannable QR code for your WiFi network.</p>
+  </header>
+
+  <div class="layout">
+    <form id="qr-form" class="card form" autocomplete="off">
+      <div class="field">
+        <label for="ssid">Network name (SSID)</label>
+        <input type="text" id="ssid" name="ssid" placeholder="MyHomeWiFi" required autocomplete="off">
+      </div>
+
+      <div class="field">
+        <label for="wifi-password">Password</label>
+        <div class="password-field">
+          <input type="password" id="wifi-password" name="wifi-password" placeholder="••••••••" autocomplete="off" data-lpignore="true" data-1p-ignore data-bwignore="true" data-form-type="other">
+          <button type="button" id="toggle-password" class="icon-button" aria-label="Show password">👁️</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="logo">Logo (PNG or SVG, optional)</label>
+        <input type="file" id="logo" name="logo" accept="image/png,image/svg+xml">
+        <p class="hint">No logo? We'll show "Connect to Wifi" in the center instead.</p>
+      </div>
+
+      <div class="field-row">
+        <div class="field field--background">
+          <label>Background</label>
+          <div class="toggle-group" role="radiogroup" aria-label="Background style">
+            <label class="toggle-option">
+              <input type="radio" name="background" value="transparent" checked>
+              <span>Transparent</span>
+            </label>
+            <label class="toggle-option">
+              <input type="radio" name="background" value="white">
+              <span>White</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="color">QR color</label>
+          <input type="color" id="color" name="color" value="#0693e3">
+        </div>
+      </div>
+
+      <p id="form-error" class="error" hidden></p>
+
+      <div class="actions">
+        <button type="submit" id="generate-btn" class="btn btn--primary">✨ Generate QR Code</button>
+        <button type="button" id="download-btn" class="btn btn--secondary" disabled>⬇️ Download PNG</button>
+      </div>
+    </form>
+
+    <div class="card preview">
+      <div class="preview__checkerboard">
+        <canvas id="preview-canvas" width="360" height="360"></canvas>
+      </div>
+      <p class="preview__hint">Scan with your phone's camera to test the connection.</p>
+    </div>
+  </div>
+</main>
+
+<script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

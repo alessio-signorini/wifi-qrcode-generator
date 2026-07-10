@@ -1,0 +1,274 @@
+:root {
+  --color-primary: #0693e3;
+  --color-primary-dark: #026198;
+  --color-bg: #fdf6ff;
+  --color-card: #ffffff;
+  --color-text: #2b2540;
+  --color-muted: #8a82a3;
+  --color-border: #ece6ff;
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  background: #ffffff;
+  color: var(--color-text);
+}
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 48px 24px 64px;
+}
+
+.page__header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.page__header h1 {
+  font-size: 2.2rem;
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  color: var(--color-muted);
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 28px;
+  align-items: stretch;
+}
+
+@media (max-width: 760px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.field-row .field {
+  flex: 1;
+  min-width: 140px;
+}
+
+.field-row .field--background {
+  flex: 1.4;
+}
+
+label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+input[type="text"],
+input[type="password"] {
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.15s ease;
+  width: 100%;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  border-color: var(--color-primary);
+}
+
+input[type="file"] {
+  font-size: 0.9rem;
+}
+
+input[type="color"] {
+  width: 56px;
+  height: 40px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  background: none;
+  padding: 0;
+}
+
+.password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-field input {
+  padding-right: 44px;
+}
+
+.icon-button {
+  position: absolute;
+  right: 6px;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 6px;
+  line-height: 1;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.toggle-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.toggle-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+.toggle-option:has(input:checked) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: #f3f1ff;
+}
+
+.toggle-option input {
+  accent-color: var(--color-primary);
+}
+
+.error {
+  color: #d1345b;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.btn {
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s ease, opacity 0.15s ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+}
+
+.btn--secondary {
+  background: #f3f1ff;
+  color: var(--color-primary-dark);
+}
+
+.btn--secondary:hover:not(:disabled) {
+  background: #e6e1ff;
+}
+
+.preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  height: 100%;
+}
+
+.preview__checkerboard {
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  background-image:
+    linear-gradient(45deg, #eee 25%, transparent 25%),
+    linear-gradient(-45deg, #eee 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #eee 75%),
+    linear-gradient(-45deg, transparent 75%, #eee 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview__checkerboard canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.preview__hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+  text-align: center;
+}
