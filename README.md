@@ -1,4 +1,4 @@
-# WiFi QR Code Generator
+# 📶 WiFi QR Code Generator
 
 A cute, fully client-side WiFi QR code generator. Enter your network name and password, optionally add a logo, pick a color, and download a scannable QR code with rounded dots, a rounded frame, and a transparent or white background.
 
